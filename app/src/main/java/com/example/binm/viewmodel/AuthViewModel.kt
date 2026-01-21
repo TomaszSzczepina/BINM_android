@@ -66,7 +66,8 @@ class AuthViewModel(private val sessionManager: SessionManager) : ViewModel() {
             try {
                 val response = RetrofitInstance.api.register(request)
                 if (response.isSuccessful) {
-                    login() // Po rejestracji logujemy, co pobierze też profil i zapisze UUID
+                    val loginResponse = RetrofitInstance.api.login(LoginRequest(email.value, password.value))// Po rejestracji logujemy, co pobierze też profil i zapisze UUID
+                    fetchAndSaveUserProfile(loginResponse.token)
                     _authState.value = AuthState.OtpRequired
                 } else {
                     _authState.value = AuthState.Error("Rejestracja nieudana: ${response.errorBody()?.string()}")

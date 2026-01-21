@@ -54,6 +54,10 @@ fun ProfilePage(
     ) { uri: Uri? ->
         uri?.let { profileViewModel.uploadProfileImage(context, it) }
     }
+
+    LaunchedEffect(Unit) {
+        profileViewModel.loadProfile()
+    }
     
     LaunchedEffect(updateState) {
         if (updateState is UpdateState.Success) {

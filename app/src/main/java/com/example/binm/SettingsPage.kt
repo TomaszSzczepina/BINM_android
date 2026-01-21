@@ -1,5 +1,6 @@
 package com.example.binm
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 fun SettingsPage(navController: NavController) {
     val isDarkTheme by MainApplication.themeManager.isDarkTheme.collectAsState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -59,12 +62,9 @@ fun SettingsPage(navController: NavController) {
                 modifier = Modifier.clickable {
                     scope.launch {
                         MainApplication.sessionManager.clearSession()
-                        navController.navigate("login") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        }
+                        val intent = Intent(context, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        context.startActivity(intent)
                     }
                 }
             )

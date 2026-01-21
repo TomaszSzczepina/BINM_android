@@ -43,7 +43,16 @@ class ProfileViewModel(private val sessionManager: SessionManager) : ViewModel()
     val profileImageUrl: StateFlow<String?> = _profileImageUrl.asStateFlow()
     
     init {
-        loadProfile()
+        viewModelScope.launch {
+            sessionManager.tokenFlow.collect { token ->
+                if (!token.isNullOrBlank()) {
+                    loadProfile()
+                } else {
+                    _uiState.value = ProfileUiState.Error("Użytkownik wylogowany")
+                    _profileImageUrl.value = null
+                }
+            }
+        }
     }
     
     fun loadProfile() {
